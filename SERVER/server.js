@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import db from "./db/index.js";
+import cors from "cors";
 
 const app = express();
 const { query } = db;
@@ -9,8 +10,8 @@ dotenv.config();
 
 // TODO: MIDDLEWARES
 app.use(express.json());
+app.use(cors());
 app.use(morgan("dev"));
-
 // TODO: LET'S START WITH ROUTES.
 // get all Restaurants;
 const RESTAURANTS = "restaurants";
@@ -99,7 +100,7 @@ app.delete(`${restaurantsRoutePath}/:id`, async (req, res) => {
     await query(`delete from ${RESTAURANTS} where ${RESTAURANTS}.id = $1`, [
       id,
     ]);
-    console.log(result.rowCount);
+    // console.log(result.rowCount);
     res.status(204).json({
       status: "success",
       message: `Deleting the restaurant with id: ${id}`,

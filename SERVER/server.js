@@ -15,6 +15,8 @@ app.use(morgan("dev"));
 // TODO: LET'S START WITH ROUTES.
 // get all Restaurants;
 const RESTAURANTS = "restaurants";
+const REVIEWS = "reviews";
+
 const restaurantsRoutePath = "/api/v1/restaurants";
 app.get(`${restaurantsRoutePath}`, async (req, res) => {
   try {
@@ -38,16 +40,21 @@ app.get(`${restaurantsRoutePath}/:id`, async (req, res) => {
     const { id } = req.params;
     //   console.log(id);
     // string concat query can lead to SQL INJECTION LEAK ATTACK USE PARAMs QUERY.
-    const result = await query(
+    const restaurants = await query(
       // `select * from ${RESTAURANTS} where ${RESTAURANTS}.id = ${id}`,
       `select * from ${RESTAURANTS} where ${RESTAURANTS}.id = $1`,
       [id]
     );
-    // console.log(result.rows);
+    const reviews = await query(
+      `select * from ${REVIEWS} where ${REVIEWS}.restaurant_id = $1`,
+      [id]
+    );
+    // console.log(restaurants.rows);
     res.status(200).json({
       status: "success",
       data: {
-        restaurant: result.rows[0],
+        restaurant: restaurants.rows[0],
+        review: reviews.rows,
       },
     });
   } catch (error) {

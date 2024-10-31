@@ -11,3 +11,16 @@ create table restaurants(
 );
 -- testing data
 INSERT INTO restaurants(id,name,location,price_range) VALUES (123,'MONAL','PAKISTAN',3);
+-- CREATING A TABLE FOR RATING.
+create table reviews(
+    id bigserial primary key,
+    -- defining the relationship with restaurants table.
+    restaurant_id bigint not null references restaurants(id),
+    name varchar(50) not null,
+    review text not null,
+    rating integer not null check(rating >= 1 and rating <=5) 
+);
+-- TESTING 
+insert into reviews(restaurant_id,name,review,rating) values(5,'Mohsoo','Really awesome .....',4);
+insert into reviews(restaurant_id,name,review,rating) values(5,'Jawad','Really awesome .....',4);
+insert into reviews(restaurant_id,name,review,rating) values(5,'Imran','Really awesome .....',4);

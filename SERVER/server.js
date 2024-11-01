@@ -117,6 +117,26 @@ app.delete(`${restaurantsRoutePath}/:id`, async (req, res) => {
   }
 });
 
+// ADDING A REVIEW
+app.post(`${restaurantsRoutePath}/:id/addReview`, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, review, rating } = req.body;
+    const newReview = await query(
+      `insert into ${REVIEWS}(restaurant_id,name,review,rating) values($1,$2,$3,$4) returning *`,
+      [id, name, review, rating]
+    );
+    res.status(201).json({
+      status: "success",
+      data: {
+        review: newReview.rows[0],
+      },
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+});
+
 //CREATING THE SERVER
 const port = process.env.PORT || 3001;
 app.listen(port, () => {

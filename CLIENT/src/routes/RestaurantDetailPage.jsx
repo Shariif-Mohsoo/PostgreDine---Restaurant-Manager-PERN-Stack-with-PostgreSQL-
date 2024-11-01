@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { RestaurantsContext } from "../context/RestaurantContexts";
 import RestaurantFinder from "../Apis/RestaurantFinder";
@@ -8,6 +8,7 @@ import AddReview from "../components/AddReview";
 
 const RestaurantDetailPage = () => {
   const { id } = useParams();
+  const [newReview, setNewReview] = useState(null);
   const { selectedRestaurant, setSelectedRestaurant } =
     useContext(RestaurantsContext);
   useEffect(() => {
@@ -22,7 +23,7 @@ const RestaurantDetailPage = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }, []);
+  }, [newReview]);
   return (
     <div>
       {selectedRestaurant && (
@@ -33,7 +34,7 @@ const RestaurantDetailPage = () => {
           <div className="mt-3">
             <Reviews reviews={selectedRestaurant.review} />
           </div>
-          <AddReview />
+          <AddReview addNewReview={setNewReview} />
         </>
       )}
     </div>

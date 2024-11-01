@@ -1,12 +1,41 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
-const AddReview = () => {
+import RestaurantFinder from "../Apis/RestaurantFinder";
+
+const AddReview = ({ addNewReview }) => {
+  const { id } = useParams();
   const [name, setName] = useState("");
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("Rating");
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await RestaurantFinder.post(`/${id}/addReview`, {
+        name,
+        review: reviewText,
+        rating,
+      });
+
+      // Clear the form inputs
+      setName("");
+      setRating(0);
+      setReviewText("");
+
+      addNewReview(response);
+
+      // Refresh the page to immediately show the new review
+      // navigate("/");
+      // navigate(location.pathname);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="mb-2">
-      <form action="">
+      <form onSubmit={handleSubmitReview}>
         <div className="form-row">
           <div className="form-group col-8">
             <label htmlFor="name">Name</label>

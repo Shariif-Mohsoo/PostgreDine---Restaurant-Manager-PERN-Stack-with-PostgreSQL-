@@ -20,8 +20,16 @@ const REVIEWS = "reviews";
 const restaurantsRoutePath = "/api/v1/restaurants";
 app.get(`${restaurantsRoutePath}`, async (req, res) => {
   try {
-    const results = await query(`select * from ${RESTAURANTS}`);
-    const { rows } = results;
+    // const results = await query(`select * from ${RESTAURANTS}`);
+    const restaurantsRatingData = await query(`
+      select * from ${RESTAURANTS} 
+      left join  (select restaurant_id,count(*),
+      trunc(avg(rating),1) as average_rating 
+      from ${REVIEWS} group by restaurant_id)
+      ${REVIEWS} on 
+      ${RESTAURANTS}.id = ${REVIEWS}.restaurant_id`);
+    // console.log(restaurantsRatingData);
+    const { rows } = restaurantsRatingData;
     res.json({
       status: "success",
       results: rows.length,
@@ -42,7 +50,13 @@ app.get(`${restaurantsRoutePath}/:id`, async (req, res) => {
     // string concat query can lead to SQL INJECTION LEAK ATTACK USE PARAMs QUERY.
     const restaurants = await query(
       // `select * from ${RESTAURANTS} where ${RESTAURANTS}.id = ${id}`,
-      `select * from ${RESTAURANTS} where ${RESTAURANTS}.id = $1`,
+      `select * from ${RESTAURANTS} 
+      left join  (select restaurant_id,count(*),
+      trunc(avg(rating),1) as average_rating 
+      from ${REVIEWS} group by restaurant_id)
+      ${REVIEWS} on 
+      ${RESTAURANTS}.id = ${REVIEWS}.restaurant_id 
+      where ${RESTAURANTS}.id = $1`,
       [id]
     );
     const reviews = await query(

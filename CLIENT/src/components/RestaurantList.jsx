@@ -4,7 +4,9 @@ import { RestaurantsContext } from "../context/RestaurantContexts";
 import RestaurantFinder from "../Apis/RestaurantFinder";
 import { useNavigate } from "react-router-dom";
 
-const RestaurantList = (props) => {
+import StarRating from "../components/StarRating";
+
+const RestaurantList = () => {
   const { restaurants, setRestaurants } = useContext(RestaurantsContext);
   // we use it for redirecting.
   let navigate = useNavigate();
@@ -22,6 +24,14 @@ const RestaurantList = (props) => {
     };
     fetchData();
   }, [setRestaurants]);
+  const renderRating = (restaurant) => {
+    return (
+      <>
+        <StarRating rating={parseFloat(restaurant.average_rating)} />
+        <span className="text-warning ml-1">({restaurant.count})</span>
+      </>
+    );
+  };
 
   const handleDelete = async (id, e) => {
     // console.log("deleting");
@@ -74,7 +84,7 @@ const RestaurantList = (props) => {
                   <td>{name}</td>
                   <td>{location}</td>
                   <td>{"$".repeat(price_range)}</td>
-                  <td>Rating</td>
+                  <td>{renderRating(restaurant)}</td>
                   <td>
                     <button
                       onClick={(e) => handleUpdate(id, e)}

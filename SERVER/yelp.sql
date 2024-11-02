@@ -24,3 +24,26 @@ create table reviews(
 insert into reviews(restaurant_id,name,review,rating) values(5,'Mohsoo','Really awesome .....',4);
 insert into reviews(restaurant_id,name,review,rating) values(5,'Jawad','Really awesome .....',4);
 insert into reviews(restaurant_id,name,review,rating) values(5,'Imran','Really awesome .....',4);
+
+
+-- finding the constraint name for reviews table and constraint type foreign key
+select constraint_name 
+from information_schema.table_constraints 
+where table_name = 'reviews' and constraint_type = 'FOREIGN KEY';
+-- constraint_name
+-- ----------------------------
+--  reviews_restaurant_id_fkey
+
+-- dropping the constraint we get
+alter table reviews
+drop constraint reviews_restaurant_id_fkey;
+
+-- Cascade delete is a feature in relational databases that automatically removes related records 
+-- from a child table when a record in the parent table is deleted. 
+-- This is useful for maintaining data integrity and ensuring that 
+-- there are no orphaned records (records that refer to a parent record that no longer exists).
+alter table reviews
+add constraint reviews_restaurant_id_fkey
+foreign key(restaurant_id) 
+references restaurants(id) 
+on delete cascade;
